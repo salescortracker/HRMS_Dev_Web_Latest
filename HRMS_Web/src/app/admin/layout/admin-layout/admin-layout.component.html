@@ -1,0 +1,10 @@
+<div class="admin-layout">
+    <app-topbar (toggleSidebar)="toggleSidebar()"></app-topbar>
+  <div class="main-content">
+    <app-sidebar [collapsed]="isSidebarCollapsed"></app-sidebar>
+    <div class="content-body">
+      <router-outlet></router-outlet> 
+    </div>
+  </div>
+  <app-footer></app-footer>
+</div>

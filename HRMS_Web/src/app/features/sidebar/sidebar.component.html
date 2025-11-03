@@ -1,0 +1,22 @@
+<nav class="navbar">
+  <ul class="menu">
+    <ng-container *ngTemplateOutlet="renderMenu; context:{ items: menu }"></ng-container>
+  </ul>
+
+  <ng-template #renderMenu let-items="items">
+    <ng-container *ngFor="let item of items">
+      <li class="dropdown">
+        <a [routerLink]="item.link || '#'">
+          <i *ngIf="item.icon" [class]="item.icon" style="margin-right:8px;"></i>
+          {{ item.label }}
+          <span *ngIf="item.children">▾</span>
+        </a>
+
+        <!-- Nested submenu -->
+        <ul class="dropdown-content" *ngIf="item.children?.length">
+          <ng-container *ngTemplateOutlet="renderMenu; context:{ items: item.children }"></ng-container>
+        </ul>
+      </li>
+    </ng-container>
+  </ng-template>
+</nav>

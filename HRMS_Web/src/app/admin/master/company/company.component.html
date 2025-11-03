@@ -1,0 +1,193 @@
+<div class="card shadow-sm">
+  <div class="container-fluid p-4 company-management">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-semibold mb-0">Company Management</h4>
+      <button class="btn btn-danger" (click)="resetForm()">
+        <i class="fa-solid fa-upload me-2"></i> Bulk Upload
+      </button>
+    </div>
+
+    <hr class="mb-4" />
+
+    <!-- Company Form -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <form (ngSubmit)="onSubmit()" #companyForm="ngForm" novalidate>
+          <div class="row g-3">
+
+            <!-- Company Name -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Company Name <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                name="CompanyName"
+                [(ngModel)]="company.companyName"
+                required
+                placeholder="Enter company name"
+              />
+            </div>
+
+            <!-- Company Code -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Company Code</label>
+              <input
+                type="text"
+                class="form-control"
+                name="CompanyCode"
+                [(ngModel)]="company.companyCode"
+                placeholder="Enter company code"
+              />
+            </div>
+
+            <!-- Industry Type -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Industry Type</label>
+              <input
+                type="text"
+                class="form-control"
+                name="IndustryType"
+                [(ngModel)]="company.industryType"
+                placeholder="Enter industry type"
+              />
+            </div>
+
+            <!-- Headquarters -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Headquarters</label>
+              <input
+                type="text"
+                class="form-control"
+                name="Headquarters"
+                [(ngModel)]="company.headquarters"
+                placeholder="Enter headquarters location"
+              />
+            </div>
+
+            <!-- Status Toggle -->
+            <div class="col-md-6 d-flex align-items-center">
+              <div class="form-check form-switch mt-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="isActiveSwitch"
+                  name="IsActive"
+                  [(ngModel)]="company.isActive"
+                />
+                <label class="form-check-label ms-2" for="isActiveSwitch">
+                  {{ company.isActive ? 'Active' : 'Inactive' }}
+                </label>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-md-6 d-flex align-items-end">
+              <button
+                type="submit"
+                class="btn btn-dark w-100"
+                [disabled]="!companyForm.valid"
+              >
+                <i class="fa-solid fa-save me-2"></i>
+                {{ isEditMode ? 'Update Company' : 'Save Company' }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Company List -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <!-- Filters -->
+        <div class="mb-3 row g-3 align-items-end">
+          <div class="col-md-4">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search by Company Name"
+              [(ngModel)]="searchText"
+            />
+          </div>
+          <div class="col-md-4">
+            <select
+              class="form-select"
+              [(ngModel)]="statusFilter"
+            >
+              <option value="">All Status</option>
+              <option [ngValue]="true">Active</option>
+              <option [ngValue]="false">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 60px;">S.No</th>
+                <th>Company Name</th>
+                <th>Company Code</th>
+                <th>Industry Type</th>
+                <th>Headquarters</th>
+                <th class="text-center">Status</th>
+                <th class="text-center" style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of filteredCompanies(); let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ c.companyName }}</td>
+                <td>{{ c.companyCode || '-' }}</td>
+                <td>{{ c.industryType || '-' }}</td>
+                <td>{{ c.headquarters || '-' }}</td>
+
+                <!-- Status Toggle in Table -->
+                <td class="text-center">
+                  <div class="form-check form-switch d-inline-flex align-items-center justify-content-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [(ngModel)]="c.isActive"
+                      (change)="toggleStatus(c)"
+                    />
+                    <label class="form-check-label small ms-2">
+                      {{ c.isActive ? 'Active' : 'Inactive' }}
+                    </label>
+                  </div>
+                </td>
+
+                <td class="text-center">
+                  <button
+                    class="btn btn-sm btn-outline-primary me-2"
+                    (click)="editCompany(c)"
+                  >
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="deleteCompany(c)"
+                  >
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="filteredCompanies().length === 0">
+                <td colspan="7" class="text-center text-muted">
+                  No records found
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

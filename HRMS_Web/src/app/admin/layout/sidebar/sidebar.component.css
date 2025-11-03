@@ -1,0 +1,126 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Sidebar container */
+.sidebar {
+   width: 250px;
+  background-color: #922b21;
+  padding-top: 20px;
+  height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
+  
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+/* Main menu item */
+.menu-item {
+  position: relative;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: background 0.3s, transform 0.3s;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* Icon for main menu */
+.menu-item i.menu-icon {
+  margin-right: 12px;
+  font-size: 18px;
+  color: #fff;
+}
+
+/* Arrow */
+.menu-item i.arrow-icon {
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+
+/* Vertical accent line */
+.menu-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  background-color: #fff;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.menu-item:hover::before {
+  opacity: 1;
+}
+
+/* Hover effect */
+.menu-item:hover {
+  background: linear-gradient(90deg, #922b21, #922b21);
+}
+
+.menu-item:hover i.arrow-icon {
+  transform: rotate(90deg);
+}
+
+/* Submenu (flyout) */
+.submenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background-color: #922b21;
+  min-width: 200px;
+  max-height: 450px;
+  overflow-y:auto ;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(0);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 2px 2px 12px rgba(0,0,0,0.4);
+  z-index: 100;
+}
+
+.menu-item:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(5px);
+}
+
+.submenu a {
+  padding: 10px 16px;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: 500;
+}
+
+.submenu a:hover {
+  background-color: #922b21;
+  transform: translateX(5px);
+  border-radius: 4px;
+}
+.sidebar.collapsed {
+  width: 40px;
+}
