@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs';
+import { EmployeeReference } from '../layout/models/employee-reference.model';
 // ------------ Model Interfaces ----------------
 export interface Company {
   companyId: number;
@@ -251,6 +252,32 @@ export class AdminService {
     return this.delete('UserManagement/DeleteRole', id);
   }
 
+// -------------------------------------------------------------
+// 🔹 EMPLOYEE REFERENCE OPERATIONS
+// -------------------------------------------------------------
+getAllEmployeeReferences(): Observable<EmployeeReference[]> {
+  return this.http.get<EmployeeReference[]>(`${this.baseUrl}/UserManagement/GetAllEmployeeReferences`);
+}
+
+getEmployeeReferenceById(id: number): Observable<EmployeeReference> {
+  return this.http.get<EmployeeReference>(`${this.baseUrl}/UserManagement/GetEmployeeReferenceById/${id}`);
+}
+
+createEmployeeReference(model: EmployeeReference): Observable<EmployeeReference> {
+  return this.http.post<EmployeeReference>(`${this.baseUrl}/UserManagement/CreateEmployeeReference`, model, this.getHeaders());
+}
+
+updateEmployeeReference(id: number, model: EmployeeReference): Observable<EmployeeReference> {
+  return this.http.post<EmployeeReference>(`${this.baseUrl}/UserManagement/UpdateEmployeeReference/${id}`, model, this.getHeaders());
+}
+
+deleteEmployeeReference(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/UserManagement/DeleteEmployeeReference/${id}`);
+}
+
+
+
+  
 
 
   // ✅ Role Permission APIs
