@@ -1,0 +1,150 @@
+<form (ngSubmit)="onSubmit()" #formRef="ngForm">
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Form / Document Type</label>
+     <select class="form-select" required [(ngModel)]="formData.documentTypeId" name="documentTypeId">
+      <option value="">Select document type</option>
+      <option *ngFor="let type of documentTypes" [value]="type.id">
+        {{ type.typeName }}
+      </option>
+    </select>
+
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Form / Document Name</label>
+      <input type="text" class="form-control" required name="documentName" [(ngModel)]="formData.documentName" placeholder="Enter document name">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Employee Code / ID</label>
+      <input type="text" class="form-control" required name="employeeCode" [(ngModel)]="formData.employeeCode" placeholder="Enter employee code">
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Issued / Submitted Date</label>
+      <input type="date" class="form-control" required name="issueDate" [(ngModel)]="formData.issueDate">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Upload File</label>
+      <input type="file" class="form-control" (change)="onFileSelected($event)" required>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Remarks / Notes</label>
+      <textarea class="form-control" name="remarks" [(ngModel)]="formData.remarks" placeholder="Additional details..."></textarea>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+  <div class="col-md-4 d-flex align-items-center">
+    <div class="form-check mt-2">
+      <input class="form-check-input" type="checkbox" name="isConfidential" [(ngModel)]="formData.isConfidential">
+      <label class="form-check-label">Mark as Confidential</label>
+    </div>
+  </div>
+
+  <div class="col-md-8 text-end">
+    <button type="submit" class="btn btn-primary me-2">Upload Form</button>
+    <button type="button" class="btn btn-primary" (click)="resetForm()">
+      <i class="fa-solid fa-rotate-left me-2"></i> Reset
+    </button>
+  </div>
+</div>
+
+</form>
+
+<!-- Table -->
+<div class="dashboard-tables full-row mt-4">
+  <div class="table-card">
+    <h3>Forms List</h3>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th (click)="sortBy('documentTypeName')" style="cursor:pointer">
+            Document Type
+            <span *ngIf="sortColumn === 'documentTypeName'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('documentName')" style="cursor:pointer">
+            Name
+            <span *ngIf="sortColumn === 'documentName'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('employeeCode')" style="cursor:pointer">
+            Employee
+            <span *ngIf="sortColumn === 'employeeCode'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('issueDate')" style="cursor:pointer">
+            Date
+            <span *ngIf="sortColumn === 'issueDate'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th>Document</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let form of paginatedForms; let i = index">
+          <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+          <td>{{ form.documentTypeName }}</td>
+          <td>{{ form.documentName }}</td>
+          <td>{{ form.employeeCode }}</td>
+          <td>{{ form.issueDate | date: 'dd-MM-yyyy' }}</td>
+          <td>
+            <a *ngIf="form.filePath"
+               [href]="getFullFilePath(form.filePath)"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-primary text-decoration-underline">
+              View
+            </a>
+            <span *ngIf="!form.filePath" class="text-muted">No file</span>
+          </td>
+          <td class="action-icons">
+            <i class="fa-solid fa-pen text-dark me-2" (click)="editForm(form)"></i>
+            <i class="fa-solid fa-trash text-dark" (click)="deleteForm(form.id)"></i>
+          </td>
+        </tr>
+
+        <tr *ngIf="paginatedForms.length === 0">
+          <td colspan="7" class="text-center text-muted">No records found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination Footer -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div>
+        <label>Show:
+          <select class="form-select d-inline w-auto ms-2" [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+          </select> entries
+        </label>
+      </div>
+
+      <div>
+        <button class="btn btn-outline-secondary btn-sm me-2"
+                (click)="changePage(currentPage - 1)"
+                [disabled]="currentPage === 1">Previous</button>
+
+        <span>Page {{ currentPage }} of {{ totalPages || 1 }}</span>
+
+        <button class="btn btn-outline-secondary btn-sm ms-2"
+                (click)="changePage(currentPage + 1)"
+                [disabled]="currentPage === totalPages || totalPages === 0">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

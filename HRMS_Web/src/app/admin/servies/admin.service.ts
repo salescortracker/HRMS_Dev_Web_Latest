@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs';
 import { EmployeeReference } from '../layout/models/employee-reference.model';
+import { EmployeeForm } from '../layout/models/employee-form.model';
 // ------------ Model Interfaces ----------------
 export interface Company {
   companyId: number;
@@ -276,6 +277,37 @@ deleteEmployeeReference(id: number): Observable<void> {
 }
 
 
+// -------------------------------------------------------------
+// 🔹 EMPLOYEE FORM / DOCUMENT UPLOAD OPERATIONS
+// -------------------------------------------------------------
+
+getAllEmployeeForms(): Observable<EmployeeForm[]> {
+  return this.http.get<EmployeeForm[]>(`${this.baseUrl}/UserManagement/GetAllForms`);
+}
+
+getEmployeeFormById(id: number): Observable<EmployeeForm> {
+  return this.http.get<EmployeeForm>(`${this.baseUrl}/UserManagement/GetFormById/${id}`);
+}
+
+// ✅ Create new form with file upload
+createEmployeeForm(formData: FormData): Observable<any> {
+  return this.http.post(`${this.baseUrl}/UserManagement/AddForm`, formData);
+}
+
+// ✅ Update form with file upload
+updateEmployeeForm(id: number, formData: FormData): Observable<any> {
+  return this.http.put(`${this.baseUrl}/UserManagement/UpdateForm/${id}`, formData);
+}
+
+// ✅ Delete form
+deleteEmployeeForm(id: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/UserManagement/DeleteForm/${id}`);
+}
+
+// ✅ Get Active Document Types for Dropdown
+getActiveDocumentTypes(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/UserManagement/GetActiveDocumentTypes`);
+}
 
   
 

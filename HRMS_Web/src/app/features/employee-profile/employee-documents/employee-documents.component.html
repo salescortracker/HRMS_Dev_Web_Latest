@@ -23,9 +23,8 @@
   </div>
 
   <!-- TAB 1: LETTERS -->
-<div id="content1" class="tab-content">
-
-  <form>
+  <div id="content1" class="tab-content">
+   <form>
     <div class="row mb-3">
       <div class="col-md-4">
         <label class="form-label">Document Type</label>
@@ -128,99 +127,12 @@
       </table>
     </div>
   </div>
-</div>
+  </div>
 
   <!-- TAB 2: FORMS -->
  <div id="content2" class="tab-content">
-
-  <form>
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Form / Document Type</label>
-        <select class="form-select" required>
-          <option value="">Select document type</option>
-          <option>HR Letter</option>
-          <option>Bank Form</option>
-          <option>Insurance Form</option>
-          <option>W4 (USA)</option>
-          <option>PF</option>
-          <option>ESIC</option>
-          <option>Others</option>
-        </select>
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label">Form / Document Name</label>
-        <input type="text" class="form-control" placeholder="Enter document name" required>
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label">Employee Code / ID</label>
-        <input type="text" class="form-control" placeholder="Enter employee code" required>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Issued / Submitted Date</label>
-        <input type="date" class="form-control" required>
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label">Upload File</label>
-        <input type="file" class="form-control" accept=".pdf,.docx,.jpg,.png" required>
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label">Remarks / Notes</label>
-        <textarea class="form-control" placeholder="Additional details..."></textarea>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-4 d-flex align-items-center">
-        <div class="form-check mt-2">
-          <input class="form-check-input" type="checkbox">
-          <label class="form-check-label">Mark as Confidential</label>
-        </div>
-      </div>
-
-      <div class="col-md-8 text-end">
-        <button type="submit" class="btn btn-primary">Upload Form</button>
-      </div>
-    </div>
-  </form>
-
-  <!-- Table -->
-  <div class="dashboard-tables full-row mt-4">
-    <div class="table-card">
-      <h3>Forms List</h3>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Employee</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Insurance Form</td>
-            <td>Health Insurance 2024</td>
-            <td>EMP003 - Anita</td>
-            <td>2024-10-01</td>
-            <td class="action-icons">
-             <i class="fa-solid fa-pen"></i>
-          <i class="fa-solid fa-trash"></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+    <app-employee-forms></app-employee-forms>
+ </div>
 
 
   <!-- TAB 3: EMPLOYEE DOCUMENTS -->
@@ -326,7 +238,8 @@
       </table>
     </div>
   </div>
+  </div>
 </div>
 
-</div>
+
 <app-footer></app-footer>
