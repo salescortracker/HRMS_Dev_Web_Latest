@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { AdminService, EmployeeCertificationDto, EmployeeEducationDto } from '../../../admin/servies/admin.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-employee-skills',
@@ -6,7 +9,7 @@ import { Component } from '@angular/core';
   templateUrl: './employee-skills.component.html',
   styleUrl: './employee-skills.component.css'
 })
-export class EmployeeSkillsComponent {
+export class EmployeeSkillsComponent  {
 activeTab = 'skills';
 
   // Skills & Job History
@@ -43,3 +46,4 @@ activeTab = 'skills';
     { label: 'Certificate / Document Upload', type: 'file', required: true, placeholder: 'Upload certificate or mark sheet' },
   ];
 }
+

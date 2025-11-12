@@ -60,6 +60,65 @@ export interface RoleMaster {
   modifiedBy?: string;
   modifiedAt?: Date;
 }
+export interface EmployeeEducationDto {
+  educationId?: number;
+  employeeId: number;
+  qualification: string;
+  specialization?: string;
+  institution?: string;
+  board?: string;
+  startDate?: string;
+  endDate?: string;
+
+  // UI fields mapped correctly
+  grade?: string;                  // Local UI field
+  mode?: string;                   // Local UI field
+  percentageOrCGPA?: string;       // Local UI field
+
+  result?: string;                 // Backend field
+  modeOfStudyId?: number;          // Backend field
+
+  certificateFilePath?: string;
+  createdBy?: string;
+  createdDate?: Date;
+  modifiedBy?: string;
+  modifiedDate?: Date;
+  companyId?: number;
+  regionId?: number;
+}
+export interface EmployeeCertificationDto {
+  certificationId: number;
+  companyId: number;
+  regionId: number;
+  employeeId: number;
+  certificationName: string;
+  certificationType: string;
+  description?: string;
+  documentPath?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  createdDate?: string;
+}
+export interface EmployeeDocumentDto {
+  id?: number;
+  employeeId: number;
+  documentTypeId: number;
+  documentName: string;
+  documentNumber?: string;
+  issuedDate?: string;
+  expiryDate?: string;
+  remarks?: string;
+  isConfidential: boolean;
+  filePath?: string;
+  documentFile?: File | null;
+  createdBy?: number;
+  modifiedBy?: number;
+}
+
+export interface DocumentTypeDto {
+  id: number;
+  typeName: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -252,6 +311,92 @@ export class AdminService {
   }
 
 
+// -------------------------------------------------------------
+// 🔹 EMPLOYEE EDUCATION OPERATIONS
+// -------------------------------------------------------------
+getEmployeeEducations(employeeId: number): Observable<EmployeeEducationDto[]> {
+  return this.getAll<EmployeeEducationDto>(
+    `UserManagement/employee/${employeeId}/education`
+  );
+}
+
+getEmployeeEducationById(id: number): Observable<EmployeeEducationDto> {
+  return this.getById<EmployeeEducationDto>(
+    `UserManagement/education/${id}`,
+    id
+  );
+}
+
+createEmployeeEducation(model: EmployeeEducationDto | FormData): Observable<any> {
+  if (model instanceof FormData) {
+    // ✅ If file upload, send as FormData
+    return this.http.post<any>(`${this.baseUrl}/UserManagement/education`, model);
+  } else {
+    // ✅ If no file upload, still send as JSON
+    return this.http.post<any>(`${this.baseUrl}/UserManagement/education`, model);
+  }
+}
+
+
+updateEmployeeEducation(id: number, model: EmployeeEducationDto | FormData): Observable<any> {
+  // ✅ Backend expects [FromForm], so send FormData if file exists
+  if (model instanceof FormData) {
+    return this.http.put<any>(
+      `${this.baseUrl}/UserManagement/education/${id}`,
+      model
+    );
+  }
+
+  // ✅ Fallback JSON request (if no file)
+  return this.http.put<any>(
+    `${this.baseUrl}/UserManagement/education/${id}`,
+    model,
+    this.getHeaders()
+  );
+}
+
+deleteEmployeeEducation(id: number): Observable<any> {
+  return this.http.delete<any>(
+    `${this.baseUrl}/UserManagement/education/${id}`
+  );
+}
+
+getModeOfStudyList(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/UserManagement/employeeeducation/modeofstudy`);
+}
+// admin.service.ts
+//-------------certification------------------//
+getEmployeeCertifications(employeeId: number) {
+  return this.http.get<EmployeeCertificationDto[]>(
+    `${this.baseUrl}/usermanagement/employee/${employeeId}/certifications`
+  );
+}
+
+// Create employee certification (with file upload)
+createEmployeeCertification(formData: FormData): Observable<any> {
+  return this.http.post(`${this.baseUrl}/usermanagement/certification`, formData);
+}
+
+// Update employee certification (with file upload)
+updateEmployeeCertification(certificationId: number, formData: FormData): Observable<any> {
+  return this.http.put(`${this.baseUrl}/usermanagement/certification/${certificationId}`, formData);
+}
+
+// Delete employee certification
+deleteEmployeeCertification(certificationId: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/usermanagement/certification/${certificationId}`);
+}
+
+// Get certification types (dropdown)
+getCertificationTypes(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/usermanagement/certification/types`);
+}
+
+  // ✅ Public getter
+  public getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
 
   // ✅ Role Permission APIs
   getPermissionsByRole(roleId: number|undefined): Observable<any[]> {
@@ -306,6 +451,44 @@ export class AdminService {
   const rootMenus = menus.filter(m => !m.parentMenuID);
   return mapPermissions(rootMenus);
 }
+
+//---------employee-documents------------------//
+ // ✅ Get all documents for employee
+  getEmployeeDocuments(employeeId: number): Observable<EmployeeDocumentDto[]> {
+    return this.http.get<EmployeeDocumentDto[]>(
+      `${this.baseUrl}/UserManagement/employee/${employeeId}/documents`
+    );
+  }
+
+  // ✅ Get single document
+  getEmployeeDocumentById(id: number): Observable<EmployeeDocumentDto> {
+    return this.http.get<EmployeeDocumentDto>(
+      `${this.baseUrl}/UserManagement/GetDocumentById/${id}`
+    );
+  }
+
+  // ✅ Add new document
+  addEmployeeDocument(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/UserManagement/AddDocument`, formData);
+  }
+
+  // ✅ Update document
+  updateEmployeeDocument(id: number, formData: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/UserManagement/UpdateDocument/${id}`, formData);
+  }
+
+  // ✅ Delete document
+  deleteEmployeeDocument(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/UserManagement/DeleteDocument/${id}`);
+  }
+
+  // ✅ Get all document types (dropdown)
+  getAllDocumentTypes(): Observable<DocumentTypeDto[]> {
+    return this.http.get<DocumentTypeDto[]>(`${this.baseUrl}/UserManagement/document/types`);
+  }
+
+
+
 
 
 }

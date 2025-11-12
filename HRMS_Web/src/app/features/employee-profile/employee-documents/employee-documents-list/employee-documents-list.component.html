@@ -1,0 +1,146 @@
+<div class="card shadow-sm p-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-semibold mb-0">
+      <i class="fa-solid fa-file-lines me-2 text-primary"></i> Employee Documents
+    </h4>
+  </div>
+
+  <hr />
+
+  <!-- Document Form -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form [formGroup]="documentForm" (ngSubmit)="saveDocument()" class="form-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <!-- Document Type -->
+        <div class="form-group" style="flex: 1 1 calc(33.33% - 20px);">
+          <label>Document Type</label>
+          <select formControlName="documentTypeId" class="form-select" required>
+            <option value="">Select Type</option>
+            <option *ngFor="let type of documentTypeList" [value]="type.id">{{ type.typeName }}</option>
+          </select>
+        </div>
+
+        <!-- Document Name -->
+        <div class="form-group" style="flex: 1 1 calc(33.33% - 20px);">
+          <label>Document Name</label>
+          <input type="text" formControlName="documentName" class="form-control" placeholder="Enter document name" required />
+        </div>
+
+         <!-- Document Number -->
+      <div class="form-group" style="flex: 1 1 calc(33.33% - 20px);">
+        <label>Document Number</label>
+        <input type="text" formControlName="documentNumber" class="form-control" placeholder="Enter document number" />
+      </div>
+
+        <!-- Issue Date -->
+        <div class="form-group" style="flex: 1 1 calc(33.33% - 20px);">
+          <label>Issued Date</label>
+          <input type="date" formControlName="issuedDate" class="form-control" />
+        </div>
+
+        <!-- Expiry Date -->
+        <div class="form-group" style="flex: 1 1 calc(33.33% - 20px);">
+          <label>Expiry Date</label>
+          <input type="date" formControlName="expiryDate" class="form-control" />
+        </div>
+
+          <!-- File Upload -->
+        <div class="form-group" style="flex: 1 1 calc(33.33% - 20px);">
+          <label>Upload Document</label>
+          <input type="file" (change)="onFileSelected($event)" class="form-control" accept=".pdf,.jpg,.png,.docx" />
+        </div>
+
+        <!-- Remarks -->
+       <div class="col-md-4">
+        <label class="form-label">Remarks / Notes</label>
+        <textarea class="form-control" placeholder="Enter remarks (optional)"></textarea>
+      </div>
+
+         <!-- Mark as Confidential -->
+      <div class="col-md-4 d-flex align-items-center">
+        <div class="form-check mt-4">
+          <input class="form-check-input" type="checkbox" formControlName="isConfidential" />
+          <label class="form-check-label">Mark as Confidential</label>
+        </div>
+      </div>
+
+      
+
+        <!-- Submit / Reset Buttons -->
+        <div class="form-group" style="flex: 1 1 100%; text-align: right;">
+          <button type="submit" class="btn btn-dark">{{ isEditMode ? 'Update Document' : 'Add Document' }}</button>
+          <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="mb-3 row g-3 align-items-end">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by Document Name"
+        [(ngModel)]="searchText"
+        (ngModelChange)="onFilterChange()"
+      />
+    </div>
+  </div>
+
+ <!-- Document Table -->
+<div class="table-responsive">
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>S.No</th>
+        <th (click)="sortBy('documentTypeId')" style="cursor:pointer">Type <span *ngIf="sortColumn === 'documentTypeId'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+        <th (click)="sortBy('documentName')" style="cursor:pointer">Title <span *ngIf="sortColumn === 'documentName'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span></th>
+        <th>Document No</th>
+        <th>Issued Date</th>
+        <th>Expiry Date</th>
+        <th>Document</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let doc of filteredDocuments(); let i = index">
+        <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+        <td>{{ getDocumentTypeName(doc.documentTypeId) }}</td>
+        <td>{{ doc.documentName }}</td>
+        <td>{{ doc.documentNumber || '—' }}</td>
+        <td>{{ doc.issuedDate | date:'dd-MM-yyyy' }}</td>
+        <td>{{ doc.expiryDate ? (doc.expiryDate | date:'dd-MM-yyyy') : '—' }}</td>
+       <td><a *ngIf="doc.filePath" (click)="viewDocument(doc.filePath)" class="text-primary fw-semibold"  style="cursor:pointer;"> View</a></td>
+        <td class="text-center">
+  <i class="fa-solid fa-pen me-2" style="color:black;" (click)="editDocument(doc)"></i>
+  <i class="fa-solid fa-trash" style="color:black;" (click)="deleteDocument(doc.id!)"></i>
+</td>
+
+      </tr>
+
+      <tr *ngIf="filteredDocuments().length === 0">
+        <td colspan="7" class="text-center text-muted">No records found</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <div>
+      <label>Show:
+        <select class="form-select d-inline w-auto ms-2" [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+          <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+        </select>
+        entries
+      </label>
+    </div>
+    <div>
+      <button class="btn btn-outline-secondary btn-sm me-2" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn btn-outline-secondary btn-sm ms-2" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+</div>

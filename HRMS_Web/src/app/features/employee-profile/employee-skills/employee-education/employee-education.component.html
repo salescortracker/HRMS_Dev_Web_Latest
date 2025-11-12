@@ -1,0 +1,202 @@
+<div class="card shadow-sm">
+  <div class="container-fluid p-4 employee-education">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-semibold mb-0">
+        <i class="fa-solid fa-graduation-cap me-2 text-danger"></i> Employee Education
+      </h4>
+    </div>
+
+    <hr />
+
+    <!-- Education Form -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <form #educationForm="ngForm" (ngSubmit)="addEducation(educationForm)" novalidate>
+          <div class="row g-3">
+
+            <!-- Qualification -->
+            <div class="col-md-4">
+              <label class="form-label">Qualification / Degree <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="qualification"
+                     [(ngModel)]="formData.qualification"
+                     placeholder="Enter qualification (e.g., B.Tech, MBA)" required />
+            </div>
+
+            <!-- Specialization -->
+            <div class="col-md-4">
+              <label class="form-label">Specialization / Major</label>
+              <input type="text" class="form-control" name="specialization"
+                     [(ngModel)]="formData.specialization"
+                     placeholder="Enter specialization" />
+            </div>
+
+            <!-- Institution -->
+            <div class="col-md-4">
+              <label class="form-label">Institution / University</label>
+              <input type="text" class="form-control" name="institution"
+                     [(ngModel)]="formData.institution"
+                     placeholder="Enter institution/university" />
+            </div>
+
+            <!-- Board -->
+            <div class="col-md-4">
+              <label class="form-label">Board</label>
+              <input type="text" class="form-control" name="board"
+                     [(ngModel)]="formData.board"
+                     placeholder="Enter board (if applicable)" />
+            </div>
+
+            <!-- Start Date -->
+            <div class="col-md-4">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="form-control" name="startDate"
+                     [(ngModel)]="formData.startDate" required />
+            </div>
+
+            <!-- End Date -->
+            <div class="col-md-4">
+              <label class="form-label">End Date / Year of Passing</label>
+              <input type="date" class="form-control" name="endDate"
+                     [(ngModel)]="formData.endDate" required />
+            </div>
+
+            <!-- Result -->
+            <div class="col-md-4">
+              <label class="form-label">Percentage / CGPA / Grade</label>
+              <input type="text" class="form-control" name="result"
+                     [(ngModel)]="formData.result"
+                     placeholder="Enter percentage/CGPA/grade" />
+            </div>
+
+            <!-- Mode of Study -->
+            <div class="col-md-4">
+              <label class="form-label">Mode of Study</label>
+              <select class="form-select" name="modeOfStudyId" [(ngModel)]="formData.modeOfStudyId">
+                <option value="">Select Mode</option>
+                <option *ngFor="let mode of modeList" [value]="mode.modeOfStudyId">
+                  {{ mode.modeName }}
+                </option>
+              </select>
+            </div>
+
+            <!-- File Upload -->
+            <div class="col-md-4">
+              <label class="form-label">Certificate / Document Upload</label>
+              <input type="file" class="form-control" name="certificateFile" (change)="uploadFile($event)" />
+            </div>
+
+               <!-- Buttons -->
+              <div class="col-12 text-end mt-3">
+                <button type="submit" class="btn btn-dark">
+                  <i class="fa-solid fa-save me-2"></i>
+                  {{ isEditMode ? 'Update Education' : 'Add Education' }}
+                </button>
+                <button type="button" class="btn btn-secondary ms-2" (click)="resetForm(educationForm)">
+                  <i class="fa-solid fa-rotate me-2"></i> Reset
+                </button>
+              </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- Education Table -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <!-- Filters -->
+        <div class="row g-3 align-items-end mb-3">
+          <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Search by Qualification"
+                   [(ngModel)]="searchText" />
+          </div>
+
+          <div class="col-md-4">
+            <select class="form-select" [(ngModel)]="modeFilter">
+              <option value="">All Modes</option>
+              <option *ngFor="let mode of modeList" [ngValue]="mode.modeOfStudyId">
+                {{ mode.modeName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4 text-end">
+            <button class="btn btn-outline-secondary" (click)="resetFilters()">
+              <i class="fa-solid fa-filter-circle-xmark me-2"></i> Reset Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th (click)="sortBy('qualification')" style="cursor:pointer">
+                  Qualification <span *ngIf="sortColumn === 'qualification'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
+                <th>Specialization</th>
+                <th>Institution</th>
+                <th (click)="sortBy('endDate')" style="cursor:pointer">
+                  Year of Passing <span *ngIf="sortColumn === 'endDate'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
+                <th>Percentage/CGPA/Grade</th>
+                <th>Document</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let edu of filteredEducations(); let i = index">
+                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td>{{ edu.qualification }}</td>
+                <td>{{ edu.specialization }}</td>
+                <td>{{ edu.institution }}</td>
+                <td>{{ edu.endDate | date:'yyyy' }}</td>
+                <td>{{ edu.result }}</td>
+          <td> <a *ngIf="edu.certificateFilePath" (click)="viewDocument(edu.certificateFilePath)"   style="cursor:pointer;" class="text-primary fw-semibold">View</a></td>
+
+                <td class="text-center">
+                <i class="fa-solid fa-pen me-2" (click)="editEducation(edu)"></i>
+                <i class="fa-solid fa-trash" (click)="deleteEducation(edu.educationId)"></i>
+              </td>
+        </tr>
+              <tr *ngIf="filteredEducations().length === 0">
+                <td colspan="8" class="text-center text-muted">No records found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div>
+            <label>Show:
+              <select class="form-select d-inline w-auto ms-2" [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+                <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+              </select> entries
+            </label>
+          </div>
+
+          <div>
+            <button class="btn btn-outline-secondary btn-sm me-2"
+                    (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+              Previous
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button class="btn btn-outline-secondary btn-sm ms-2"
+                    (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
