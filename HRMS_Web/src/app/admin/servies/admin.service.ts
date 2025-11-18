@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs';
+import { EmployeeReference } from '../layout/models/employee-reference.model';
+import { EmployeeForm } from '../layout/models/employee-form.model';
 // ------------ Model Interfaces ----------------
 export interface Company {
   companyId: number;
@@ -310,6 +312,63 @@ export class AdminService {
     return this.delete('UserManagement/DeleteRole', id);
   }
 
+// -------------------------------------------------------------
+// 🔹 EMPLOYEE REFERENCE OPERATIONS
+// -------------------------------------------------------------
+getAllEmployeeReferences(): Observable<EmployeeReference[]> {
+  return this.http.get<EmployeeReference[]>(`${this.baseUrl}/UserManagement/GetAllEmployeeReferences`);
+}
+
+getEmployeeReferenceById(id: number): Observable<EmployeeReference> {
+  return this.http.get<EmployeeReference>(`${this.baseUrl}/UserManagement/GetEmployeeReferenceById/${id}`);
+}
+
+createEmployeeReference(model: EmployeeReference): Observable<EmployeeReference> {
+  return this.http.post<EmployeeReference>(`${this.baseUrl}/UserManagement/CreateEmployeeReference`, model, this.getHeaders());
+}
+
+updateEmployeeReference(id: number, model: EmployeeReference): Observable<EmployeeReference> {
+  return this.http.post<EmployeeReference>(`${this.baseUrl}/UserManagement/UpdateEmployeeReference/${id}`, model, this.getHeaders());
+}
+
+deleteEmployeeReference(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/UserManagement/DeleteEmployeeReference/${id}`);
+}
+
+
+// -------------------------------------------------------------
+// 🔹 EMPLOYEE FORM / DOCUMENT UPLOAD OPERATIONS
+// -------------------------------------------------------------
+
+getAllEmployeeForms(): Observable<EmployeeForm[]> {
+  return this.http.get<EmployeeForm[]>(`${this.baseUrl}/UserManagement/GetAllForms`);
+}
+
+getEmployeeFormById(id: number): Observable<EmployeeForm> {
+  return this.http.get<EmployeeForm>(`${this.baseUrl}/UserManagement/GetFormById/${id}`);
+}
+
+// ✅ Create new form with file upload
+createEmployeeForm(formData: FormData): Observable<any> {
+  return this.http.post(`${this.baseUrl}/UserManagement/AddForm`, formData);
+}
+
+// ✅ Update form with file upload
+updateEmployeeForm(id: number, formData: FormData): Observable<any> {
+  return this.http.put(`${this.baseUrl}/UserManagement/UpdateForm/${id}`, formData);
+}
+
+// ✅ Delete form
+deleteEmployeeForm(id: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/UserManagement/DeleteForm/${id}`);
+}
+
+// ✅ Get Active Document Types for Dropdown
+getActiveDocumentTypes(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.baseUrl}/UserManagement/GetActiveDocumentTypes`);
+}
+
+  
 
 // -------------------------------------------------------------
 // 🔹 EMPLOYEE EDUCATION OPERATIONS
