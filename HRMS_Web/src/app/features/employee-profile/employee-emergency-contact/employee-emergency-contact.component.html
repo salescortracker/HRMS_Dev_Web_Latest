@@ -1,91 +1,156 @@
- <div class="form-container">
-    <!-- Form Section -->
-    <form>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="required">Contact Name</label>
-          <input type="text" placeholder="Enter full name" required>
-        </div>
-
-        <div class="form-group">
-          <label class="required">Relationship</label>
-          <select required>
-            <option value="">Select relationship</option>
-            <option>Spouse</option>
-            <option>Parent</option>
-            <option>Sibling</option>
-            <option>Friend</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="required">Phone Number</label>
-          <input type="tel" placeholder="Enter phone number" required>
-        </div>
+<div class="form-container">
+  <!-- Form Section -->
+  <form #contactForm="ngForm" (ngSubmit)="saveContact(contactForm)">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="required">Contact Name</label>
+        <input
+          type="text"
+          name="contactName"
+          [(ngModel)]="formModel.contactName"
+          placeholder="Enter full name"
+          required>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Alternate Phone</label>
-          <input type="tel" placeholder="Enter alternate phone">
-        </div>
-
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" placeholder="Enter email">
-        </div>
-
-        <div class="form-group">
-          <label>Address</label>
-          <input type="text" placeholder="Enter full address">
-        </div>
+      <div class="form-group">
+        <label class="required">Relationship</label>
+        <select
+          name="relationship"
+          [(ngModel)]="formModel.relationship"
+          required>
+          <option value="">Select relationship</option>
+          <option>Spouse</option>
+          <option>Parent</option>
+          <option>Sibling</option>
+          <option>Friend</option>
+          <option>Other</option>
+        </select>
       </div>
 
-      <button type="submit" class="submit-btn">Add Contact</button>
-    </form>
+      <div class="form-group">
+        <label class="required">Phone Number</label>
+        <input
+          type="tel"
+          name="phoneNumber"
+          [(ngModel)]="formModel.phoneNumber"
+          placeholder="Enter phone number"
+          required>
+      </div>
+    </div>
 
-    <!-- Table Section -->
-    <table>
-      <thead>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Alternate Phone</label>
+        <input
+          type="tel"
+          name="alternatePhone"
+          [(ngModel)]="formModel.alternatePhone"
+          placeholder="Enter alternate phone">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="formModel.email"
+          placeholder="Enter email">
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <input
+          type="text"
+          name="address"
+          [(ngModel)]="formModel.address"
+          placeholder="Enter full address">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-btn">
+        {{ isEdit ? 'Update Contact' : 'Add Contact' }}
+      </button>
+       <button type="button" class="submit-btn" (click)="resetForm(contactForm)">
+         Reset
+       </button>
+    </div>
+  </form>
+
+  
+
+  <!-- Table Section -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
         <tr>
           <th>S.No</th>
-          <th>Contact Name</th>
-          <th>Relationship</th>
-          <th>Phone Number</th>
+          <th (click)="sortBy('contactName')" style="cursor:pointer">
+            Contact Name
+            <span *ngIf="sortColumn === 'contactName'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('relationship')" style="cursor:pointer">
+            Relationship
+            <span *ngIf="sortColumn === 'relationship'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
+          <th (click)="sortBy('phoneNumber')" style="cursor:pointer">
+            Phone Number
+            <span *ngIf="sortColumn === 'phoneNumber'">
+              {{ sortDirection === 'asc' ? '▲' : '▼' }}
+            </span>
+          </th>
           <th>Alt. Phone</th>
           <th>Email</th>
           <th>Address</th>
-          <th class="actions">Actions</th>
+          <th class="actions text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>John Doe</td>
-          <td>Parent</td>
-          <td>9876543210</td>
-          <td>9988776655</td>
-          <td>john&#64;example.com</td>
-          <td>123, Street Name, City</td>
-          <td class="actions">
-            <i class="fa-solid fa-edit" title="Edit"></i>
-            <i class="fa-solid fa-trash" title="Delete"></i>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Mary Smith</td>
-          <td>Friend</td>
-          <td>9123456780</td>
-          <td>-</td>
-          <td>mary&#64;example.com</td>
-          <td>456, Avenue Road, Town</td>
-          <td class="actions">
-            <i class="fa-solid fa-edit" title="Edit"></i>
-            <i class="fa-solid fa-trash" title="Delete"></i>
+        <tr *ngFor="let contact of filteredContacts(); let i = index">
+          <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+          <td>{{ contact.contactName }}</td>
+          <td>{{ contact.relationship }}</td>
+          <td>{{ contact.phoneNumber }}</td>
+          <td>{{ contact.alternatePhone || '-' }}</td>
+          <td>{{ contact.email || '-' }}</td>
+          <td>{{ contact.address || '-' }}</td>
+          <td class="text-center">
+            <button type="button" title="Edit" (click)="editContact(contact)">
+              <i class="fa-solid fa-edit"></i>
+            </button>
+            <button type="button" title="Delete" (click)="deleteContact(contact.emergencyContactId)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div>
+        <label>Show:
+          <select class="form-select d-inline w-auto ms-2"
+                  [(ngModel)]="pageSize"
+                  (change)="changePageSize(pageSize)">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+          </select> entries
+        </label>
+      </div>
+
+      <div>
+        <button class="btn btn-outline-secondary btn-sm me-2"
+                (click)="changePage(currentPage - 1)"
+                [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn btn-outline-secondary btn-sm ms-2"
+                (click)="changePage(currentPage + 1)"
+                [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
   </div>
+</div>

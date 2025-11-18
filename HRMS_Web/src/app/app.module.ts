@@ -16,7 +16,7 @@ import { EmployeePersonalDetailsComponent } from './features/employee-profile/em
 import { EmployeeFamilyDetailsComponent } from './features/employee-profile/employee-details/employee-family-details/employee-family-details.component';
 import { EmployeeEmergencyContactComponent } from './features/employee-profile/employee-emergency-contact/employee-emergency-contact.component';
 import { EmployeeReferencesComponent } from './features/employee-profile/employee-references/employee-references.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ManagerDashboardComponent } from './features/auth/manager-dashboard/manager-dashboard.component';
 import { FinanceDashboardComponent } from './features/auth/finance-dashboard/finance-dashboard.component';
 import { EmployeeDashboardComponent } from './features/auth/employee-dashboard/employee-dashboard.component';
@@ -110,11 +110,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     MyCalendarComponent,
     MyEventsComponent,
     CompensationComponent,
-    RecruitmentProcessComponent
+    RecruitmentProcessComponent,
+     EmployeeFamilyDetailsComponent 
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,FormsModule ,HttpClientModule,NgxSpinnerModule
+    AppRoutingModule,FormsModule ,HttpClientModule,NgxSpinnerModule,ReactiveFormsModule
   ],
   providers: [
     provideClientHydration(withEventReplay())

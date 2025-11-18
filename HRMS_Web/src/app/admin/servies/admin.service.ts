@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs';
+import { EmployeeEmergencyContact } from '../layout/models/employee-emergency-contact.model';
+import { EmployeeImmigration } from '../layout/models/employee-Immigration.model';
 // ------------ Model Interfaces ----------------
 export interface Company {
   companyId: number;
@@ -60,6 +62,24 @@ export interface RoleMaster {
   modifiedBy?: string;
   modifiedAt?: Date;
 }
+
+export interface EmployeeFamilyDetail {
+  familyId: number;
+  employeeId: number | null;
+  name: string;
+  relationship: string;
+  dateOfBirth: string;
+  gender: string;
+  occupation?: string;
+  phone?: string;
+  address?: string;
+  isDependent: boolean;
+  companyId: number;
+  regionId: number;
+  createdBy: number;
+  modifiedBy?: number | null;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -250,7 +270,65 @@ export class AdminService {
   deleteRoles(id: number): Observable<void> {
     return this.delete('UserManagement/DeleteRole', id);
   }
+   
 
+ // -------------------------------------------------------------
+// 🔹 EMPLOYEE FAMILY DETAILS OPERATIONS
+// -------------------------------------------------------------
+getEmployeeFamilyDetails(employeeId: number): Observable<EmployeeFamilyDetail[]> {
+  // backend has no parameterized API, so just call GetAll
+  return this.http.get<EmployeeFamilyDetail[]>(`${this.baseUrl}/UserManagement/GetAllEmployeeFamilyDetails`);
+}
+
+
+getEmployeeFamilyDetailById(id: number): Observable<EmployeeFamilyDetail> {
+  return this.http.get<EmployeeFamilyDetail>(`${this.baseUrl}/UserManagement/GetEmployeeFamilyDetailById/${id}`);
+}
+
+createEmployeeFamilyDetail(model: EmployeeFamilyDetail): Observable<EmployeeFamilyDetail> {
+  return this.http.post<EmployeeFamilyDetail>(`${this.baseUrl}/UserManagement/CreateEmployeeFamilyDetail`, model, this.getHeaders());
+}
+
+updateEmployeeFamilyDetail(id: number, model: EmployeeFamilyDetail): Observable<EmployeeFamilyDetail> {
+  return this.http.put<EmployeeFamilyDetail>(`${this.baseUrl}/UserManagement/UpdateEmployeeFamilyDetail/${id}`, model, this.getHeaders());
+}
+
+deleteEmployeeFamilyDetail(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/UserManagement/DeleteEmployeeFamilyDetail/${id}`);
+}
+
+///employeeemeergencycontact
+
+getAllContacts(): Observable<EmployeeEmergencyContact[]> {
+    return this.http.get<EmployeeEmergencyContact[]>(`${this.baseUrl}/UserManagement/GetAllEmployeeEmergencyContacts`);
+  }
+
+  // 🔹 Get by ID
+  getContactById(id: number): Observable<EmployeeEmergencyContact> {
+    return this.http.get<EmployeeEmergencyContact>(`${this.baseUrl}/UserManagement/GetEmployeeEmergencyContactById/${id}`);
+  }
+
+  // 🔹 Get by Employee ID
+  getContactsByEmployeeId(employeeId: number): Observable<EmployeeEmergencyContact[]> {
+    return this.http.get<EmployeeEmergencyContact[]>(`${this.baseUrl}/UserManagement/GetEmergencyContactsByEmployeeId/${employeeId}`);
+  }
+
+  // 🔹 Create new contact
+  createContact(contact: EmployeeEmergencyContact): Observable<EmployeeEmergencyContact> {
+    return this.http.post<EmployeeEmergencyContact>(`${this.baseUrl}/UserManagement/CreateEmployeeEmergencyContact`, contact, this.getHeaders());
+  }
+
+  // 🔹 Update contact
+  updateContact(id: number, contact: EmployeeEmergencyContact): Observable<EmployeeEmergencyContact> {
+    return this.http.put<EmployeeEmergencyContact>(`${this.baseUrl}/UserManagement/UpdateEmployeeEmergencyContact/${id}`, contact, this.getHeaders());
+  }
+
+  // 🔹 Delete contact
+  deleteContact(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/UserManagement/DeleteEmployeeEmergencyContact/${id}`);
+  }
+
+  
 
 
   // ✅ Role Permission APIs
@@ -307,5 +385,30 @@ export class AdminService {
   return mapPermissions(rootMenus);
 }
 
+// -------------------------------------------------------------
+// 🔹 EMPLOYEE IMMIGRATION OPERATIONS
+// -------------------------------------------------------------
+
+getAllEmployeeImmigrations(): Observable<EmployeeImmigration[]> {
+  return this.http.get<EmployeeImmigration[]>(`${this.baseUrl}/UserManagement/GetAllEmployeeImmigrations`);
+}
+
+getEmployeeImmigrationById(id: number): Observable<EmployeeImmigration> {
+  return this.http.get<EmployeeImmigration>(`${this.baseUrl}/UserManagement/GetEmployeeImmigrationById/${id}`);
+}
+
+createEmployeeImmigration(model: EmployeeImmigration): Observable<EmployeeImmigration> {
+  return this.http.post<EmployeeImmigration>(`${this.baseUrl}/UserManagement/CreateEmployeeImmigration`, model, this.getHeaders());
+}
+
+updateEmployeeImmigration(id: number, model: EmployeeImmigration): Observable<EmployeeImmigration> {
+  return this.http.put<EmployeeImmigration>(`${this.baseUrl}/UserManagement/UpdateEmployeeImmigration/${id}`, model, this.getHeaders());
+}
+
+deleteEmployeeImmigration(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/UserManagement/DeleteEmployeeImmigration/${id}`);
+}
+
+  
 
 }

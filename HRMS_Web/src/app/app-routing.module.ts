@@ -82,6 +82,7 @@ const routes: Routes = [
 { path: 'financedashboard', component: FinanceDashboardComponent },
 { path: 'managerdashboard', component: ManagerDashboardComponent },
 { path: 'empdashboard', component: EmployeeDashboardComponent },
+{path: 'employeefamilydetails', component:EmployeeFamilyDetailsComponent},
   {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
